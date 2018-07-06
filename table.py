@@ -12,27 +12,54 @@ class Table:
         self.height = height
         self.max_row = False
         self.max_col = False
-        
+
     def __repr__(self):
         """String representation special method for table class."""
-        st = ''
-        sp = ' ' * (max([max([max([len(str(v)) for v in tu]) for tu in rw.items()]) for rw in self._row])) + ' '
-        if len(sp) % 2 == 1:
-            sp += ' '
+        st = '\n'
+        if len(self._hdr) == 0 and len(self._row) <= 1:
+            st += 'Empty Table\n'
+            return st
         _hdr = self._hdr
+        _row = self._row
         if self.display_index:
             _hdr = [self.index] + _hdr
-        for row in self._row:
+        if not self.display_headers:
+            _row = _row[1:]
+        sz = {}
+        for hdr in _hdr:
+            lng = 0
+            for row in _row:
+                lng = max(len(str(row[hdr])), lng)
+            sz[hdr] = lng
+        if self.display_headers:
+            tl = ' |'
+            for k,v in sz.items():
+                tl += '--' + '-' * (v + 2) + '|'
+            st += tl
+            st += '\n'
+        for row in _row:
             st += ' '
+            if self.display_headers:
+                st += '|  '
             for hdr in _hdr:
                 cl = str(row[hdr])
-                if len(cl) % 2 == 1:
-                    cl += ' '
-                bf = (len(sp) - len(cl)) // 2
-                bf = ' ' * bf
-                cl = bf + cl + bf
+                cl += ' ' * (sz[hdr] + 2 - len(cl))
+                if self.display_headers:
+                    cl += '|'
+                cl += '  '
                 st += cl
             st += '\n'
+            if row[self.index] == 0:
+                tl = ' |'
+                for k,v in sz.items():
+                    tl += '--' + '-' * (v + 2) + '|'
+                st += tl
+                st += '\n'
+        if self.display_headers:
+            tl = ' |'
+            for k,v in sz.items():
+                tl += '--' + '-' * (v + 2) + '|'
+            st += tl
         return st
     
     def _update_hdr_row(self):
