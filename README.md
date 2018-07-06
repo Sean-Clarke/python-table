@@ -1,6 +1,8 @@
 # Python Table Class
 Simple custom python Table class
 
+Version: beta
+
 ## Getting Started
 
 ### Prerequisites
@@ -12,26 +14,39 @@ Until at stable version, if you would like to mess around with this class, place
 ## Using the Table
 
 ### Basic Examples
+```
+#!/usr/bin/env python
 from table import Table
+
 t = Table()
+
 t.add_row(year=2018, host='Korea', city='Pyeongchang', season='winter')
 t.add_row(year=2016, host='Brazil', city='Rio de Janeiro', season='summer')
 t.add_row(year=2014, host='Russia', city='Sochi', season='winter')
 t.add_row(year=2012, host='United Kingdom', city='London', season='summer')
 t.add_row(year=2010, host='Canada', city='Vancouver', season='winter')
-print(t)
 
+print(t)
+```
 ### Table Properties
 width:
+
 height:
+
 display_width:
+
 display_height:
+
 
 ### Table Methods
 add_col()
+
 add_row()
+
 rmv_col()
+
 rmv_row()
+
 rnm_col
 
 ## Information
