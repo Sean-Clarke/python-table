@@ -1,7 +1,7 @@
 class Table:
     """A class representing a simple data table consisting of a list of dictionary objects."""
     
-    def __init__(self, index='index', show_index=True, width=False, height=False):
+    def __init__(self, *args, index='id', show_index=True, width=False, height=False, **kwargs):
         """Initialization special method for table class."""
         self.display_index = show_index
         self.display_headers = True
@@ -10,8 +10,8 @@ class Table:
         self._row = [{self.index:0}]
         self.width = width
         self.height = height
-        self.max_row = False
-        self.max_col = False
+        self.display_width = width
+        self.display_height = height
 
     def __repr__(self):
         """String representation special method for table class."""
@@ -19,47 +19,51 @@ class Table:
         if len(self._hdr) == 0 and len(self._row) <= 1:
             st += 'Empty Table\n'
             return st
-        _hdr = self._hdr
+        dw = None
+        dh = None
+        if self.display_width:
+            dw = self.display_width
+        if self.display_height:
+            dh = self.display_height
+        _hdr = self._hdr[:dw]
         _row = self._row
         if self.display_index:
             _hdr = [self.index] + _hdr
+            if dw:
+                _hdr = _hdr[:-1]    
         if not self.display_headers:
             _row = _row[1:]
+            if dh:
+                _row = _row[:dh]
+        else:
+            _row = _row[:dh]
+            _row[0][self.index] = self.index
         sz = {}
         for hdr in _hdr:
             lng = 0
             for row in _row:
                 lng = max(len(str(row[hdr])), lng)
             sz[hdr] = lng
-        if self.display_headers:
-            tl = ' |'
-            for k,v in sz.items():
-                tl += '--' + '-' * (v + 2) + '|'
-            st += tl
-            st += '\n'
+        tl = ' |'
+        for k,v in sz.items():
+            tl += '--' + '-' * (v + 2) + '|'
+        st += tl
+        st += '\n'
         for row in _row:
             st += ' '
-            if self.display_headers:
-                st += '|  '
+            st += '|  '
             for hdr in _hdr:
                 cl = str(row[hdr])
                 cl += ' ' * (sz[hdr] + 2 - len(cl))
-                if self.display_headers:
-                    cl += '|'
+                cl += '|'
                 cl += '  '
                 st += cl
             st += '\n'
-            if row[self.index] == 0:
-                tl = ' |'
-                for k,v in sz.items():
-                    tl += '--' + '-' * (v + 2) + '|'
-                st += tl
-                st += '\n'
-        if self.display_headers:
             tl = ' |'
             for k,v in sz.items():
                 tl += '--' + '-' * (v + 2) + '|'
             st += tl
+            st += '\n'
         return st
     
     def _update_hdr_row(self):
@@ -119,36 +123,40 @@ class Table:
         return self._hdr
     
     def get_width(self):
-        """Returns this object's width."""
+        """Returns this object's width property."""
         return len(self._hdr)
         
     def get_height(self):
-        """Returns this object's height."""
+        """Returns this object's height property."""
         return len(self._row)
         
-    def get_max_row(self):
-        """Returns this object's max_row."""
-        return self.max_row
+    def get_display_width(self):
+        """Returns this object's display_width property."""
+        return self.display_width
         
-    def get_max_col(self):
-        """Returns this object's max_col."""
-        return self.max_col
+    def get_display_height(self):
+        """Returns this object's display_height property."""
+        return self.display_height
         
     def get_dim(self):
         """Returns this object's dimensions."""
         return (self.get_width(),self.get_height())
         
     def set_width(self, w):
-        self.width = w
+        """Sets this object's width property to given int w"""
+        self.width = int(w)
         
     def set_height(self, h):
-        self.height = h
+        """Sets this object's height property to given int h"""
+        self.height = int(h)
         
-    def set_max_col(self, clim):
-        self.max_col = clim
+    def set_display_width(self, dw):
+        """Sets this object's display_width property to given int dw"""
+        self.display_width = int(dw)
         
-    def set_max_row(self, rlim):
-        self.max_row = rlim
+    def set_display_height(self, dh):
+        """Sets this object's display_height property to given int dh"""
+        self.display_height = int(dh)
     
     def rnm_col(self, **kwargs):
         if kwargs:
