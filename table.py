@@ -1,7 +1,7 @@
 class Table:
     """A class representing a simple data table consisting of a list of dictionary objects."""
     
-    def __init__(self, *args, index='id', show_index=True, width=False, height=False, **kwargs):
+    def __init__(self, *args, index='index', show_index=True, width=False, height=False, **kwargs):
         """Initialization special method for table class."""
         self.display_index = show_index
         self.display_headers = True
@@ -12,6 +12,20 @@ class Table:
         self.height = height
         self.display_width = width
         self.display_height = height
+        if args and len(args) == 1:
+            if type(args[0]) == str:
+                if '\n' in args[0]:
+                    lines = args[0].split('\n')
+                    headers = lines[0].split(',')
+                    for line in lines[1:]:
+                        cells = iter(line.split(','))
+                        row = {}
+                        for header in headers:
+                            row[header] = next(cells, None)
+                        self.add_row(**row)
+            elif type(args[0]) == list:
+                for row in args[0]:
+                    self.add_row(**row)
 
     def __repr__(self):
         """String representation special method for table class."""
@@ -65,6 +79,30 @@ class Table:
             st += tl
             st += '\n'
         return st
+        
+    def __getitem__(self, *args):
+        """Get item special method for table class"""
+        out = {}
+        while type(args) == tuple:
+            args = list(args)
+            if type(args[0]) == tuple: 
+                args = args[0]
+        print(args)
+        for kw in args:
+            k,v = kw.split('=')
+            out[k]=v
+            print(out)
+        rows = self.get_row(**out)
+        print(rows)
+        if len(rows) == 1:
+            return rows[0]
+        else:
+            for row in rows:
+                sc = dict(row)
+                i = rows.index(row)
+                sc.pop(self.index)
+                rows[i] = sc
+            return Table(rows)
     
     def _update_hdr_row(self):
         """Updates 0-index row with header names."""
@@ -113,6 +151,7 @@ class Table:
             sift = self._row
             for k,v in kwargs.items():
                 sift = filter(lambda row: row[k] == v, sift)
+                print(list(sift))
             return list(sift)
         else:
             print("get_row() requires either a row index or at least 1 key-value pair.")
@@ -188,7 +227,7 @@ class Table:
                 _arg = iter(args)
             for row in self._row:
                 if h not in row:
-                    row[h] = next(_arg, 'null')
+                    row[h] = next(_arg, None)
             for arg in _arg:
                 kw={h:arg}
                 self.add_row(**kw)
@@ -214,7 +253,7 @@ class Table:
         _arg = iter(args)
         for hdr in self._hdr:
             if not hdr in nwr:
-                nwr[hdr] = next(_arg, 'null')
+                nwr[hdr] = next(_arg, None)
         for arg in _arg:
             h = self._add_empty_col()
             nwr[h] = arg
@@ -363,6 +402,14 @@ class Table:
             else:
                 print("Invalid style_kv given: %s, try 'strict' or 'soft'" % style_kv)
                 return
+                
+    def set_column(self, col):
+        """ """
+        pass
+    
+    def set_row(self, row):
+        """ """
+        pass
     
     def clear_table(self, keep_hdr=False):
         """Deletes all rows from table; if keep_hdr gets passed True, the header row and data is kept."""
@@ -378,16 +425,41 @@ class Table:
     def rmv_cell(self, *args, **kwargs):
         pass
         
+    def map_col(self, h, f):
+        """Given header h and function f, returns """
+        pass
+        
     def compare_rows(self, *args, **kwargs):
         """Given filters as either row indexes, or key-value identifiers, compares rows meeting given filters."""
         pass
         
-    def merge(self, new, mergetpye='inclusive'):
+    def merge(self, new, mergetpye='union'):
         """Merges new (table) with calling table."""
         pass
         
-    def split():
+    def split(method='default', **kwargs):
+        """
+        Splits the table into two or more tables by the designated method; options for method are:
+        'default':
+        'ilimits': Given, atleast one index or k,v pair, table is split at each given index, or each time the k,v pair is matched, returning tables maintaining the number of columns in the calling table.
+        'hlimits': Given, atleast one header, table is split at each header, returning number of headers given + 1 tables maintaining the number of rows in the calling table.
+        'col': Given n, returns n ~equally sized tables representing n sections of columns from the original table. Given a negative number, table is split into single column tables. Given no argument, table is split in half. 
+        'row': Given n, returns n ~equally sized tables representing n sections of rows from the original table. Given a negative number, table is split into single row tables. Given no argument, table is split in half. 
+        """
         pass
     
-    def sub():
+    def sub(self):
+        """Returns a subset of the table for which the given function is true"""
+        pass
+        
+    def fill_empty(self, v, row=[], col=[], method='union'):
+        """
+        Replaces all None values in the specified columns(by header) and rows(by index or k=v pair) with the given value v.
+        If no rows or columns are specified, all None values in the table are replaced; options for method are:
+        'union': values replaced can be from either any specified row, or any specified column
+        'intersection': values replaced must be in both a specified row and column
+        """
+        pass
+        
+    def import_from(self):
         pass
