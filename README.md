@@ -1,7 +1,7 @@
 # Python Table Class
-Simple custom python Table class
+Simple Custom Python Table Data Structure Class
 
-Version: beta
+Version: 0.1d
 
 ## Getting Started
 
