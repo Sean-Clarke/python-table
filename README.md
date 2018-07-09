@@ -9,7 +9,7 @@ Version: beta
 Python 3+
 
 ### Installation
-Until at stable version, if you would like to mess around with this class, place table.py into folder of files you wish to import to
+From 'Clone or download' above, select 'Download ZIP'. After download is complete, unpack files into local directory, navigate to this directory in cmd, and run: ```python setup.py install``` 
 
 ## Using the Table
 
